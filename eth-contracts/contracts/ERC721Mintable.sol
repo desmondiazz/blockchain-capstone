@@ -158,12 +158,12 @@ contract ERC721 is Pausable, ERC165{
 
 //    @dev Approves another address to transfer the given token ID
     function approve(address to, uint256 tokenId) public {
-        
+        address owner = ownerOf(tokenId);
         // TODO require the given address to not be the owner of the tokenId
-        require(_tokenOwner[tokenId]!=to,'To address should be owner of the token');
+        require(owner!=to,'To address should not be owner of the token');
 
         // TODO require the msg sender to be the owner of the contract or isApprovedForAll() to be true
-        require(getOwner()==msg.sender || _isApprovedOrOwner(msg.sender, tokenId),'Sender should be contract owner or should be approved for all');
+        require(owner==msg.sender || _isApprovedOrOwner(msg.sender, tokenId),'Sender should be contract owner or should be approved for all');
 
         // TODO add 'to' address to token approvals
         _tokenApprovals[tokenId] = to;
@@ -200,7 +200,7 @@ contract ERC721 is Pausable, ERC165{
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public {
-        require(_isApprovedOrOwner(msg.sender, tokenId));
+        require(_isApprovedOrOwner(msg.sender, tokenId),'Not approved to transfer this token');
 
         _transferFrom(from, to, tokenId);
     }
@@ -259,10 +259,10 @@ contract ERC721 is Pausable, ERC165{
         require(from==tokenOwner,"From address should be owner of the token");
 
         // TODO: require token is being transfered to valid address
-        require(!to.isContract(),'Not a valid address');
+        require(to != address(0),"Not a valid address");
 
         // TODO: clear approval
-        delete _tokenApprovals[tokenId];
+        _clearApproval(tokenId);
 
         // TODO: update token counts & transfer ownership of the token ID
         _ownedTokensCount[from].decrement();
@@ -556,7 +556,7 @@ contract ERC721Mintable is ERC721Metadata {
 
     }
 
-    function mint(address to, uint256 tokenId, string memory tokenURI)
+    function mint(address to, uint256 tokenId)
     public
     onlyOwner
     returns(bool)
