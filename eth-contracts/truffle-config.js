@@ -1,3 +1,6 @@
+const HDWalletProvider = require('truffle-hdwallet-provider');
+const fs = require('fs');
+const mnemonic = fs.readFileSync(".secret").toString().trim();
 /**
  * Use this file to configure your truffle project. It's seeded with some
  * common settings for different networks and features like migrations,
@@ -47,6 +50,12 @@ module.exports = {
       port: 8545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
      },
+     rinkeby: {
+      provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/409f92836a124c70b90e32888f47896e`),
+      network_id: '*',       // Ropsten's id
+      gas: 4500000,
+      gasPrice: 10000000000,        // Ropsten has a lower block limit than mainnet
+    },
 
     // Another network with more advanced options...
     // advanced: {
