@@ -4,5 +4,5 @@ var SolnSquareVerifier = artifacts.require("./SolnSquareVerifier.sol");
 
 module.exports = async function(deployer) {
   await deployer.deploy(SquareVerifier);
-  deployer.deploy(SolnSquareVerifier,SquareVerifier.address);
+  await deployer.deploy(SolnSquareVerifier,SquareVerifier.address);
 };
